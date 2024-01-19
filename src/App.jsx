@@ -1,9 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import NavBar from './components/NavBar';
-import AllPlayers from './components/AllPlayers';
-import SinglePlayer from './components/SinglePlayer';
-import NewPlayerForm from './components/NewPlayerForm';
+import NavBar from '../src/components/NavBar';
+import AllPlayers from '../src/components/AllPlayers';
+import SinglePlayer from '../src/components/SinglePlayer';
+import NewPlayerForm from '../src/components/NewPlayerForm';
 
 const App = () => {
   return (
