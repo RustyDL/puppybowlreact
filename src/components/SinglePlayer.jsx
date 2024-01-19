@@ -1,53 +1,48 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams, useHistory } from "react-router-dom";
 
 const SinglePlayer = () => {
   const [singlePlayer, setSinglePlayer] = useState({});
   const [error, setError] = useState(null);
 
-  const params = useParams();
-
-  const playerId = params.id;
-  console.log("player id", playerId);
+  const { id } = useParams();
+  const history = useHistory();
 
   useEffect(() => {
-    async function singlePlayerData(playerId) {
-      const singlePlayerData = await fetchSinglePlayer(playerId);
-      if (singlePlayerData instanceof Error) {
-        setError(singlePlayerData);
+    const fetchSinglePlayerData = async () => {
+      try {
+        const data = await fetchSinglePlayer(id);
+        setSinglePlayer(data);
+      } catch (error) {
+        setError(error);
       }
-      console.log("from the fetch single data", singlePlayerData);
-      setSinglePlayer(singlePlayerData);
-    }
-    fetchSinglePlayerData(playerId);
-  }, []);
+    };
+
+    fetchSinglePlayerData();
+  }, [id]);
 
   return (
     <div>
-      {error && !singlePlayer && <p>Failed to load single player card.</p>}
-      <div>
+      {error && <p>Failed to load single player data.</p>}
+      {Object.keys(singlePlayer).length > 0 && (
         <div>
-          <img src={singlePlayer.imageUrl} alt={singlePlayer.name}></img>
+          <div>
+            <img src={singlePlayer.imageUrl} alt={singlePlayer.name} />
+          </div>
+          <div>
+            <h3>{singlePlayer.name}</h3>
+            <p>
+              <b>Breed:</b> {singlePlayer.breed}
+            </p>
+            <p>
+              <b>Status:</b> {singlePlayer.status}
+            </p>
+            <button onClick={() => handleRemove(singlePlayer.id)}>
+              Delete Player
+            </button>
+          </div>
         </div>
-        <div>
-          <h3>{singlePlayer.name}</h3>
-          <p>
-            <b>Breed:</b> {singlePlayer.breed}
-          </p>
-          <p>
-            <b>Status:</b> {singlePlayer.status}
-          </p>
-
-          <button
-            onClick={() => {
-              handleRemove(singlePlayer.id);
-            }}
-          >
-            {" "}
-            Delete Player
-          </button>
-        </div>
-      </div>
+      )}
     </div>
   );
 };
