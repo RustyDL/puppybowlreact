@@ -1,10 +1,17 @@
-import { Link } from "react-router-dom";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import AllPlayers from '../components/AllPlayers';
+import HomePage from '../components/HomePage';
+import NewPlayerForm from '../components/NewPlayerForm';
 
-export default function NavBar() {
+const NavBar = () => {
   return (
     <div id="navbar">
-      <Link to="/">All Puppies</Link>
-      <Link to="/newplayerform">New Player Form</Link>
+      <HomePage />
+      <Link to="/new">Create New Player</Link>
+      <AllPlayers />
     </div>
   );
-}
+};
+
+export default NavBar;

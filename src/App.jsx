@@ -1,47 +1,27 @@
-import "../src/App.jsx";
-import AllPlayers from "../src/components/AllPlayers.jsx";
-import fetchAllPuppies from "../src/API/index.js";
-import SinglePlayer from "../src/components/SinglePlayer.jsx";
-import { Route, Routes } from "react-router-dom";
-import { useState, useEffect } from "react";
-import NavBar from "../src/components/NavBar.jsx";
-import Searchbar from "../src/components/SearchBar.jsx";
-import CreatePlayerForm from "../src/components/NewPlayerForm.jsx";
+import { useState } from 'react'
+import '../src/App.jsx'
+import NavBar from '../src/components/NavBar.jsx'
+import SinglePlayer from '../src/components/SinglePlayer.jsx'
+import MainContainer from '../src/components/HomePage.jsx'
 
 function App() {
-  const [players, setPlayers] = useState([]);
-  const [result, setResults] = useState([]);
-
-  async function makePlayersUseful() {
-    let puppyArray = await fetchAllPuppies();
-    setPlayers(puppyArray);
-  }
-
-  useEffect(() => {
-    makePlayersUseful();
-  }, []);
+  const [count, setCount] = useState(0)
 
   return (
     <>
-      <div id="Searchbar">
-        <Searchbar />
+    <div id="container">
+      <div id="navbar">
+       <NavBar />
+       </div> 
+      <div id="main-section">
+       <MainContainer />
+      </div>
       </div>
       <div>
-        <NavBar id="navBar" />
-      </div>
-
-      <div id="routeDiv">
-        <Routes>
-          <Route path="/" element={<AllPlayers players={players} />} />
-          <Route
-            path="/players/:playerId"
-            element={<SinglePlayer players={players} />}
-          />
-          <Route path="/newPlayerForm" element={<CreatePlayerForm />} />
-        </Routes>
+        <SinglePlayer />
       </div>
     </>
-  );
+  )
 }
 
-export default App;
+export default App
