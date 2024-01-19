@@ -1,44 +1,67 @@
-// API functions for fetching, creating, and deleting players
+const API_URL =
+  "https://fsa-puppy-bowl.herokuapp.com/api/2310-fsa-et-web-pt-sf/players/";
 
-const API_URL = 'https://fsa-puppy-bowl.herokuapp.com/api/2310-fsa-et-web-pt-sf/players';
+export default async function fetchAllPuppies() {
+  try {
+    const response = await fetch(`${API_URL}/players`);
+    const result = await response.json();
+    // console.log(result.data.players);
+    return result.data.players;
+  } catch (error) {
+    console.error(error);
+  }
+}
 
-export async function fetchPlayers(){
-    try{
-        const response = await fetch("https://fsa-puppy-bowl.herokuapp.com/api/2310-fsa-et-web-pt-sf/players/");
-        const data = await response.json();
-        console.log(" All players",data.data.players);
-        return data.data.players;
-    }catch(e){
-        console.error(e)
-    };
+//irl name this file services, thunks, etc. - this is the clearinghouse for adjusting all the API calls
+
+const fetchSinglePuppy = async (playerId) => {
+  try {
+    const response = await fetch(`${API_URL}/players/${playerId}`);
+    const result = await response.json();
+    if (result.error) throw result.error;
+    return result.data.player;
+  } catch (err) {
+    console.error(`Oh no, trouble fetching player #${playerId}!`, err);
+  }
 };
 
-export async function fetchSinglePlayer(playerId){
-    try{
-    const response = await fetch("https://fsa-puppy-bowl.herokuapp.com/api/2310-fsa-et-web-pt-sf/players/" + playerId)
-    const data = await response.json();
-    console.log( "fetching single player",data.data.player);
-    return data.data.player;
-    }catch(e){
-    console.error(e)
-    }
-    }
+// async function makePuppyUseful() {
+//      let usefulPuppy = await fetchSinglePlayer();
+//      console.log(usefulPuppy);
+// }
 
-export const createNewPlayer = (playerData) => {
-  // Implement creating a new player
-};
 
-export const handleRemove = async (id) =>{
-    if(window.confirm("Do you REALLY want to remove the puppy player?")){
-    try{
-        const response = await fetch("https://fsa-puppy-bowl.herokuapp.com/api/2310-fsa-et-web-pt-sf/players/" + id,
-        {
-            method: 'DELETE',
-        })
-        const result = await response.json();
-        console.log(result)
-    }catch(e){
-        console.error(e)
-    }
-    }
-    }
+
+
+// IGNORE FOR NOW, attempt at add new player
+async function createPuppy(name, breed, image) {
+  try {
+    const response = await fetch(`${API_URL}/players`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, breed, image }),
+      });
+
+    const result = await response.json();
+    return result
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function deletePuppy(id) {
+  try {
+    const response = await fetch(`${API_URL}/players/${id}`, {
+      method: "DELETE",
+    });
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+export { fetchSinglePuppy, createPuppy, deletePuppy };

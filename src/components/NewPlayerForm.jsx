@@ -1,84 +1,56 @@
-import { React, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { createPuppy } from "../API/index";
 
-export default function NewPlayerForm() {
-  const [puppyName, setPuppyName] = useState("");
-  const [puppyStatus, setPuppyStatus] = useState("");
-  const [puppyBreed, setPuppyBreed] = useState("");
-  const [error, setError] = useState("");
+export default function CreatePlayerForm({ players, setPlayers }) {
+  const [name, setName] = useState("");
+  const [breed, setBreed] = useState("");
+  const [image, setImage] = useState("");
+  const [error, setError] = useState(null);
 
-  const navigate = useNavigate();
+  async function handleSubmit(e) {
+    e.preventDefault();
 
-  function resetForm() {
-    setError("");
-    setPuppyName("");
-    setPuppyBreed("");
-    setPuppyStatus("");
-  }
-  async function handleSubmit(event) {
-    event.preventDefault();
+    const result = await createPuppy(name, breed, image);
+    if (result.success) {
+      console.log("New Player: ", result.data.newPlayer);
 
-    console.log(puppyName, puppyStatus, puppyBreed);
+      const newPlayers = [...players, result.data.newPlayer];
+      setPlayers(newPlayers);
 
-    if (!error) {
-      try {
-        const response = await fetch(
-          "https://fsa-puppy-bowl.herokuapp.com/api/2310-fsa-et-web-pt-sf/players/",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              name: puppyName,
-              status: puppyStatus,
-              breed: puppyBreed,
-            }),
-          }
-        );
-        const result = await response.json();
-        console.log(result);
-      } catch (error) {
-        console.error(e);
-      }
+      setName("");
+      setBreed("");
+      setImage("");
+    } else {
+      setError(result.error.message);
     }
   }
 
   return (
-    <>
-      <div>
-        <h3>Add New Player</h3>
-        {error && <p>{error}</p>}
-        <form method="POST" onSubmit={handleSubmit}>
-          <label>
-            Name:{" "}
-            <input
-              value={puppyName}
-              onChange={(e) => setPuppyName(e.target.value)}
-            />
-          </label>
-          <label>
-            Breed:{" "}
-            <input
-              value={puppyBreed}
-              onChange={(e) => setPuppyBreed(e.target.value)}
-            />
-          </label>
-          <label>
-            Status:{" "}
-            <input
-              value={puppyStatus}
-              onChange={(e) => setPuppyStatus(e.target.event)}
-            />
-          </label>
-          <button disabled={error} type="submit">
-            Submit
-          </button>
-          <button type="reset" onClick={resetForm}>
-            Reset
-          </button>
-        </form>
-      </div>
-    </>
+    <form onSubmit={handleSubmit} className="form-container">
+      {error && <p>{error}</p>}
+      <h2>New Player Form</h2>
+      <input
+        value={name}
+        type="text"
+        name="name"
+        placeholder="name"
+        onChange={(e) => setName(e.target.value)}
+      />
+      <input
+        value={breed}
+        type="text"
+        name="breed"
+        placeholder="breed"
+        onChange={(e) => setBreed(e.target.value)}
+      />
+      <input
+        value={image}
+        type="text"
+        name="image"
+        placeholder="Image Url"
+        onChange={(e) => setImage(e.target.value)}
+      />
+      <button>Submit</button>
+    </form>
   );
 }

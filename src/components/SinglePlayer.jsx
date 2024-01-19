@@ -1,50 +1,32 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-const SinglePlayer = () => {
-  const [singlePlayer, setSinglePlayer] = useState({});
-  const [error, setError] = useState(null);
+export default function SinglePlayer({ players }) {
+  const { playerId } = useParams();
+  console.log(playerId);
+  const matchedPlayer = players.find((player) => {
+    return player.id == playerId;
+  });
 
-  const { id } = useParams();
-  const history = useHistory();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchSinglePlayerData = async () => {
-      try {
-        const data = await fetchSinglePlayer(id);
-        setSinglePlayer(data);
-      } catch (error) {
-        setError(error);
-      }
-    };
-
-    fetchSinglePlayerData();
-  }, [id]);
+  async function handleDelete({ singlePlayer }) {
+    try {
+      const result = await deletePuppy(singlePlayer);
+      console.log(result);
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   return (
-    <div>
-      {error && <p>Failed to load single player data.</p>}
-      {Object.keys(singlePlayer).length > 0 && (
-        <div>
-          <div>
-            <img src={singlePlayer.imageUrl} alt={singlePlayer.name} />
-          </div>
-          <div>
-            <h3>{singlePlayer.name}</h3>
-            <p>
-              <b>Breed:</b> {singlePlayer.breed}
-            </p>
-            <p>
-              <b>Status:</b> {singlePlayer.status}
-            </p>
-            <button onClick={() => handleRemove(singlePlayer.id)}>
-              Delete Player
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
+    <>
+      <h1>{matchedPlayer.name}</h1>
+      <h1>{matchedPlayer.breed}</h1>
+      <h1>{matchedPlayer.status}</h1>
+      <img src={matchedPlayer.imageUrl} alt={matchedPlayer.name} />
+      <h1>{matchedPlayer.teamId}</h1>
+      <button onClick={handleDelete}>Delete Puppy</button>
+    </>
   );
-};
-
-export default SinglePlayer;
+}
