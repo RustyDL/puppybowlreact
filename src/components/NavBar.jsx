@@ -1,18 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import AllPlayers from '../components/AllPlayers';
+import HomePage from '../components/HomePage';
+import NewPlayerForm from '../components/NewPlayerForm';
 
 const NavBar = () => {
   return (
-    <nav>
-      <ul>
-        <li>
-          <Link to="/">All Players</Link>
-        </li>
-        <li>
-          <Link to="/new">Create New Player</Link>
-        </li>
-      </ul>
-    </nav>
+    <div id="navbar">
+      <HomePage />
+      <Link to="/new">Create New Player</Link>
+      <AllPlayers />
+    </div>
   );
 };
 

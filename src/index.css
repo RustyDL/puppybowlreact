@@ -11,6 +11,7 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
 }
 
 a {
@@ -24,8 +25,6 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
 }
@@ -65,4 +64,8 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+.playerImage {
+  justify-items: flex-start;
+
 }

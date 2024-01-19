@@ -1,44 +1,53 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { getPlayerById, deletePlayer } from '../ajaxHelpers';
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 const SinglePlayer = () => {
-  const navigate = useNavigate();
-  const { id } = useParams();
-  const [player, setPlayer] = useState(null);
+  const [singlePlayer, setSinglePlayer] = useState({});
+  const [error, setError] = useState(null);
+
+  const params = useParams();
+
+  const playerId = params.id;
+  console.log("player id", playerId);
 
   useEffect(() => {
-    const fetchPlayer = async () => {
-      const fetchedPlayer = await getPlayerById(id);
-      setPlayer(fetchedPlayer);
-    };
-
-    fetchPlayer();
-  }, [id]);
-
-  const handleButtonClick = () => {
-    navigate('/');
-  };
-
-  const handleDeleteClick = async () => {
-    await deletePlayer(id);
-    navigate('/');
-  };
+    async function singlePlayerData(playerId) {
+      const singlePlayerData = await fetchSinglePlayer(playerId);
+      if (singlePlayerData instanceof Error) {
+        setError(singlePlayerData);
+      }
+      console.log("from the fetch single data", singlePlayerData);
+      setSinglePlayer(singlePlayerData);
+    }
+    fetchSinglePlayerData(playerId);
+  }, []);
 
   return (
     <div>
-      {player ? (
+      {error && !singlePlayer && <p>Failed to load single player card.</p>}
+      <div>
         <div>
-          <h2>{player.name}'s Details</h2>
-          {/* Display other player details */}
-          <button onClick={handleButtonClick}>Back to All Players</button>
-          <button onClick={handleDeleteClick} className="delete-button">
+          <img src={singlePlayer.imageUrl} alt={singlePlayer.name}></img>
+        </div>
+        <div>
+          <h3>{singlePlayer.name}</h3>
+          <p>
+            <b>Breed:</b> {singlePlayer.breed}
+          </p>
+          <p>
+            <b>Status:</b> {singlePlayer.status}
+          </p>
+
+          <button
+            onClick={() => {
+              handleRemove(singlePlayer.id);
+            }}
+          >
+            {" "}
             Delete Player
           </button>
         </div>
-      ) : (
-        <p>Loading player details...</p>
-      )}
+      </div>
     </div>
   );
 };

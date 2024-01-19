@@ -1,28 +1,77 @@
-import React, { useState, useEffect } from 'react';
-import { fetchAllPlayers } from '../ajaxHelpers'; // Adjust the path accordingly
+import React from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { fetchAllPlayers } from "../ajaxHelpers";
 
 const AllPlayers = () => {
   const [players, setPlayers] = useState([]);
+  const [filterPlayers, setFilterPlayers] = useState([]);
+  const [error, setError] = useState(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchPlayers = async () => {
-      const fetchedPlayers = await fetchAllPlayers();
-      setPlayers(fetchedPlayers);
-    };
+    async function fetchPlayerData() {
+      const playerData = await fetchPlayers();
+      if (playerData instanceof Error) {
+        setError(playerData);
+      }
+      setPlayers(playerData);
+      setFilterPlayers(playerData);
+    }
+    fetchPlayerData();
+  }, []); 
 
-    fetchPlayers();
-  }, []); // Empty dependency array ensures the effect runs only once on component mount
+  const Filter = (event) => {
+    setFilterPlayers(
+      players.filter((f) => f.name.toLowerCase().includes(event.target.value))
+    );
+  };
 
   return (
     <div>
-      {players.map((player) => (
-        <div key={player.id}>
-          <h4>{player.name}</h4>
-          {/* Display other player details as needed */}
-        </div>
-      ))}
+      <div>
+        <h2>Search Players</h2>
+        <input
+          name="search"
+          type="text"
+          onChange={Filter}
+          placeholder="Search Player Here..."
+        />
+      </div>
+      <div>
+        {error && !players && <p> Failed to load players from roster</p>}
+        {players
+          ? filterPlayers.map((player) => {
+              return (
+                <div key={player.name}>
+                  <div>
+                    <img
+                      src={player.imageUrl}
+                      alt={player.name}
+                      className="playerImage"
+                    ></img>
+                  </div>
+                  <div>
+                    <h3>{player.name}</h3>
+                    <p>
+                      <b> Breed: </b>
+                      {player.breed}
+                    </p>
+                    <p>
+                      {" "}
+                      <b>Status: </b>
+                      {player.status}
+                    </p>
+                    <button onClick={() => navigate("/players/" + player.id)}>
+                      Player Info
+                    </button>
+                  </div>
+                </div>
+              );
+            })
+          : !error && <p>Loading ...</p>}
+      </div>
     </div>
   );
 };
-
-export default AllPlayers;

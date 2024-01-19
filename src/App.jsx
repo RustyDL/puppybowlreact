@@ -4,6 +4,7 @@ import NavBar from '../src/components/NavBar';
 import AllPlayers from '../src/components/AllPlayers';
 import SinglePlayer from '../src/components/SinglePlayer';
 import NewPlayerForm from '../src/components/NewPlayerForm';
+import './App.css'
 
 const App = () => {
   return (
