@@ -1,59 +1,52 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import getSinglePlayer from '../API/FunctionHandler'
+import classes from '../components/SinglePlayer.module.css'
+import Button from 'react-bootstrap/Button';
+import someFunction from '/src/API/FunctionHandler.js';
 
-const SinglePlayer = () => {
-  const [singlePlayer, setSinglePlayer] = useState({});
+export default function SinglePlayer() {
+  const [singlePlayer, setSinglePlayer] = useState([]);
   const [error, setError] = useState(null);
-
+  const navigate = useNavigate();
+  const someFunction = require('/src/API/FunctionHandler.js').default;
   const { id } = useParams();
-  const history = useHistory();
+  
 
   useEffect(() => {
-    const fetchSinglePlayerData = async () => {
+    async function fetchPlayer() {
       try {
-        const data = await fetchSinglePlayer(id);
-        setSinglePlayer(data);
+        const player = await getSinglePlayer(id);
+        console.log(player);
+         setSinglePlayer(player);
       } catch (error) {
         setError(error);
       }
-    };
-
-    fetchSinglePlayerData();
-  }, [id]);
-
-  const handleRemove = async (playerId) => {
-    try {
-      await deletePlayer(playerId);
-      history.push("/"); // Redirect to the homepage after deletion
-    } catch (error) {
-      console.error("Error deleting player:", error);
     }
-  };
-
+    fetchPlayer();
+  }, [id]);
+      //console.log(singlePlayer)
   return (
-    <div>
-      {error && <p>Failed to load single player data.</p>}
-      {Object.keys(singlePlayer).length > 0 && (
-        <div>
-          <div>
-            <img src={singlePlayer.imageUrl} alt={singlePlayer.name} />
-          </div>
-          <div>
-            <h3>{singlePlayer.name}</h3>
-            <p>
-              <b>Breed:</b> {singlePlayer.breed}
-            </p>
-            <p>
-              <b>Status:</b> {singlePlayer.status}
-            </p>
-            <button onClick={() => handleRemove(singlePlayer.id)}>
-              Delete Player
-            </button>
-          </div>
-        </div>
+    <div className={classes.container}>
+    
+      {error && <p>{error}</p>}
+      {singlePlayer.length === 0 ? <p>Error loading data</p> : ""}
+      {singlePlayer && (
+
+        <section className={classes['single-container']}>
+          <div className={classes['puppy-data']}>
+            <h2>Name:{singlePlayer.name}</h2>
+            <h3>Breed:{singlePlayer.breed}</h3>
+            <h3>Status:{singlePlayer.status}</h3>
+            <h3>Team: {singlePlayer.team && singlePlayer.team.name}</h3>
+            <img className={classes.img} src={singlePlayer.imageUrl} />
+          </div> 
+          
+          <Button className={classes.button} 
+          variant="outline-success" onClick={
+            ()=> navigate("/allplayers")}>Close</Button>{' '}
+        </section>
       )}
     </div>
   );
-};
-
-export default SinglePlayer;
+      }

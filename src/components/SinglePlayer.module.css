@@ -1,0 +1,35 @@
+.container{
+    background-color: blanchedalmond;
+}
+
+.single-container{
+        display: flex;
+        flex-direction: column;
+        padding: 2.5em;
+        border-radius: 5%;
+        background-color:burlywood;
+        margin-top: 5px;
+        margin: 10em;
+        justify-content: flex-start;
+        align-items: flex-start;
+        background-image: url("../assets/BG.jpg");
+    
+}
+
+.puppy-data{
+
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size:small;
+
+}
+.img{
+    height: 30em;
+    width: 30em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.button {
+  text-align: center;
+  justify-content: space-around;
+}

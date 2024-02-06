@@ -1,0 +1,14 @@
+.img {
+    width: 100%;
+
+}
+
+.h1{
+    font: inherit;
+    font-size:x-large;
+    color: black;
+}
+
+.body{
+    background-color: bisque;
+}

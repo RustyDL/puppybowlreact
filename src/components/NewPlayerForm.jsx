@@ -1,56 +1,98 @@
-import { useState } from "react";
-import { createPuppy } from "../API/index";
+import {  useState, useEffect } from 'react';
+import { postPlayer } from '../API/FunctionHandler.js';
+import classes from '../components/NewplayerForm.module.css';
+import Button from 'react-bootstrap/Button';
+import { useNavigate } from 'react-router-dom';
 
-export default function CreatePlayerForm({ players, setPlayers }) {
-  const [name, setName] = useState("");
-  const [breed, setBreed] = useState("");
-  const [image, setImage] = useState("");
-  const [error, setError] = useState(null);
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+const  NewPlayerForm = () => {  
+    const [puppyName, setPuppyName] = useState("");
+    const [puppyBreed, setPuppyBreed] = useState("");
+    const [playerStatus, setPlayerStatus] = useState("bench");
+    const [imageUrl, setImageUel] = useState("");
 
-    const result = await createPuppy(name, breed, image);
-    if (result.success) {
-      console.log("New Player: ", result.data.newPlayer);
+    const navigate = useNavigate();
 
-      const newPlayers = [...players, result.data.newPlayer];
-      setPlayers(newPlayers);
-
-      setName("");
-      setBreed("");
-      setImage("");
-    } else {
-      setError(result.error.message);
+      function submitHandler(event){
+      event.preventDefault();
+      console.log(puppyName,puppyBreed,playerStatus,imageUrl );
     }
-  }
 
-  return (
-    <form onSubmit={handleSubmit} className="form-container">
-      {error && <p>{error}</p>}
-      <h2>New Player Form</h2>
-      <input
-        value={name}
-        type="text"
-        name="name"
-        placeholder="name"
-        onChange={(e) => setName(e.target.value)}
-      />
-      <input
-        value={breed}
-        type="text"
-        name="breed"
-        placeholder="breed"
-        onChange={(e) => setBreed(e.target.value)}
-      />
-      <input
-        value={image}
-        type="text"
-        name="image"
-        placeholder="Image Url"
-        onChange={(e) => setImage(e.target.value)}
-      />
-      <button>Submit</button>
-    </form>
-  );
-}
+        //  useEffect(()=> {
+        //   async function postPuppy(){
+        //     await postPlayer();
+        //   }
+        //   postPuppy()
+        //  },[]);
+        const player = {
+          name: puppyName,
+          breed: puppyBreed,
+          imageUrl: imageUrl,
+          status: playerStatus
+        }
+         
+    
+        function submitHandler(e) {
+          e.preventDefault();
+          postPlayer(player) //player variables is an object with the staste as the values
+          navigate('/allplayers')
+        }
+      console.log(player)
+         
+
+        const resetHandler =()=>{
+        setPuppyName('');
+        setPuppyBreed('');
+
+// we can dynamically update this state object whenever the inputChangeHandler is executed
+        };
+
+    return (
+        
+       <form onSubmit={submitHandler} className={classes.form} >
+        <div className={classes['input-group']}>
+            
+                <label className={classes.label} htmlFor="name">NAME:</label>
+                <input className={classes.input} 
+              type="text" 
+              id="name" 
+              value={puppyName}
+              onChange={(e)=> setPuppyName(e.target.value)}
+              /><br />
+
+                   <label className={classes.label} htmlFor="breed">BREED:</label>
+                <input className={classes.input} 
+              type="text" 
+              id="breed"
+              value={puppyBreed}
+              onChange={(e)=> setPuppyBreed(e.target.value)}
+              /><br />
+
+                     <label className={classes.label} htmlFor="url">ImageUrl:</label>
+                <input className={classes.input} 
+              type="text" 
+              id="url" 
+              value={imageUrl}
+              onChange={(e)=> setImageUel(e.target.value)}
+              /> <br />
+
+            <label className={classes.label}>
+          Status:
+          <select className={classes.label}
+            value={playerStatus}
+            onChange={(e)=>setPlayerStatus(e.target.value) }
+          >
+            <option value="bench">Bench</option>
+            <option value="field">Field</option>
+          </select>
+        </label> 
+        </div>
+        <p className={classes.buttons}>
+            <Button className={classes.button} variant="outline-warning" onClick={resetHandler} type="reset">Reset</Button>{' '}
+        </p>
+            <button className={classes.button} variant="outline-success">Add Player</button>{' '}
+       </form>
+    );
+};
+
+export default NewPlayerForm;

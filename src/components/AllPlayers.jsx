@@ -1,78 +1,91 @@
-import React, { useState, useEffect } from "react";
+import { getAllPlayers, deletePlayer} from '../API/FunctionHandler.js'
+import {useState, useEffect} from 'react'
 import { useNavigate } from "react-router-dom";
-import { fetchAllPlayers } from "../ajaxHelpers";
+import classes from '../components/AllPlayers.module.css';
+import Card from 'react-bootstrap/Card';
+import Button from 'react-bootstrap/Button';
+import {InputGroup, FormControl } from "react-bootstrap";
 
-const AllPlayers = () => {
-  const [players, setPlayers] = useState([]);
-  const [filterPlayers, setFilterPlayers] = useState([]);
-  const [error, setError] = useState(null);
 
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const playerData = await fetchAllPlayers();
-        setPlayers(playerData);
-        setFilterPlayers(playerData);
-      } catch (error) {
-        setError(error);
-      }
+
+ const AllPlayers = () => {
+    const [players, setPlayers] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [searchValue, setSearchValue] = useState('');
+    const [searchResult, setSearchResult] = useState();
+   
+    
+
+    const navigate = useNavigate();
+
+    // a function use effect should not return a promise
+    useEffect(()=>{
+    async function getPlayer(){
+      try{
+      const response = await getAllPlayers();
+      setPlayers(response)
+      setIsLoading(false);
+    } catch(error){
+        console.log(error);
+       }
+    }
+    getPlayer();
+    },[]);
+  
+    if(isLoading) {
+      return(
+        <section className="puppy-isLoading">
+          <p>Loading...</p>
+        </section>
+      )
+    }
+    function clickHandler(playerId){
+      navigate(`/players/${playerId}`);
     };
 
-    fetchData();
-  }, []); 
-
-  const handleFilter = (event) => {
-    const searchTerm = event.target.value.toLowerCase();
-    setFilterPlayers(
-      players.filter((player) => player.name.toLowerCase().includes(searchTerm))
-    );
-  };
-
-  return (
-    <div>
-      <div>
-        <h2>Search Players</h2>
-        <input
-          name="search"
-          type="text"
-          onChange={handleFilter}
-          placeholder="Search Player Here..."
-        />
-      </div>
-      <div>
-        {error && <p>Error: {error.message}</p>}
-        {players.length > 0 ? (
-          filterPlayers.map((player) => (
-            <div key={player.name}>
-              <div>
-                <img
-                  src={player.imageUrl}
-                  alt={player.name}
-                  className="playerImage"
+       const deleteHandler = async (id) => {
+       const response = await deletePlayer(id);//deleting from the database
+       const notDeleted = players.filter(item => item.id !== id); //deleting it from state
+      // console.log(notDeleted)
+       setPlayers(notDeleted)
+     }
+       console.log(searchValue)
+ 
+      function searchBars(e){
+        e.preventDefault();
+        const result = players.filter(item=>
+          item.name.toLowerCase().includes(searchValue.toLowerCase()));
+        setSearchValue(result)
+      }
+      
+    return ( 
+    <div className={classes.allplayers} >
+           <InputGroup className="mb-3">
+                <FormControl onSubmit={searchBars}
+                    placeholder="Search"
+                    value={searchValue}
+                    onChange={(e)=>setSearchResult(e.target.value)}
                 />
-              </div>
-              <div>
-                <h3>{player.name}</h3>
-                <p>
-                  <b>Breed:</b> {player.breed}
-                </p>
-                <p>
-                  <b>Status:</b> {player.status}
-                </p>
-                <button onClick={() => navigate("/players/" + player.id)}>
-                  Player Info
-                </button>
-              </div>
-            </div>
-          ))
-        ) : (
-          !error && <p>Loading ...</p>
-        )}
-      </div>
+                <Button variant="outline-success" type="submit">Search</Button>
+            </InputGroup>
+       {players.map((player)=>(
+          <Card key={player.id} className={classes.container}>
+            <Card.Body className={classes.body}>
+                 <Card.Text className={classes.text}>
+                  <h1 className={classes.h1}>Name:{player.name}</h1>
+                  <h1 className={classes.h1}>Breed:{player.breed}</h1>
+                  <h1 className={classes.h1}>Teamid:{player.teamId}</h1>
+                  <img className={classes.images}src  ={player.imageUrl} />
+                  
+                </Card.Text>
+                 <Button onClick={()=>clickHandler(player.id)} variant="outline-success">View Puppy</Button>{' '}              
+               <Button onClick={()=>deleteHandler(player.id)} variant="outline-danger">Delete Puppy</Button>{' '}
+         </Card.Body>
+        </Card>          
+         ))}
     </div>
-  );
+    );
 };
 
 export default AllPlayers;

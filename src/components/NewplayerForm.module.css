@@ -1,0 +1,41 @@
+.form {
+
+    display: flex;;
+    flex-direction: column;
+    width: 20em;
+    background-color: rosybrown;
+    margin-right: 0;
+    width: 100%;
+    -webkit-box-shadow: 0 -10px 6px -6px #363636b0;
+    -moz-box-shadow: 0 -10px 6px -6px #363636b0;
+    box-shadow: 0 -10px 6px -6px #363636b0;
+    padding: 1em 0 5em 0;
+    color: black solid 1em;
+    
+}
+.input-group{
+    padding: 5rem;
+    width: 100px;
+    height: auto;
+    border-radius: 10%;
+    width: 100%;
+}
+
+.input {
+    width: 500px;
+    height: 40px;
+    margin: 10px;
+    
+}
+
+.label{
+   font-family: Verdana, Geneva, Tahoma, sans-serif;
+   font-size: large;
+}
+
+.button{
+    margin: 8px;
+    display: -moz-grid-group;
+    border-radius: 10%;
+  
+}
